@@ -23,22 +23,23 @@ def currentDate():
     dateNow = datetime.date(datetime.now())
     return dateNow
 
-def countdownTimer():
+def countdownTimer(key):
     randomTime = random.randint(2,5)
     for i in range(randomTime, 0, -1):
         print(f"{i}")
         time.sleep(1)
     #Yoinked from internet ngl
     os.system('cls' if os.name == 'nt' else 'clear')
+    print(f"Type in the key {key}")
     return
 
 def userInputs():
-    userName = input("congrats!!! You made top ten. Please enter your name: ")
+    userName = input("Please enter your name: ")
     userGradYear = input("Please enter your graduation year: ")
     userDate = currentDate()
     return userName, userGradYear, userDate
 
-def checkTop10(timeElapsed):
+def checkTop10(timeElapsed, userName, userGradYear, userDate):
     replacedValues = []
     scoreFile = open("reaction_scores.txt", "r")
     scoreFileLines = scoreFile.readlines()
@@ -55,55 +56,59 @@ def checkTop10(timeElapsed):
     for listInfo in scoreFileLines:
         try:
             if timeElapsed < float(listInfo[1]):
-                userName, userGradYear, userDate = userInputs()
+                print("You have made it into the top10!")
                 replacedValues.append(userName + ", ")
                 replacedValues.append(str(timeElapsed) + ", ")
                 replacedValues.append(userGradYear + ", ")
                 replacedValues.append(str(userDate) + "\n")
+
+                del scoreFileLinesTwo[-1]
+                scoreFileLinesTwo.insert(counter, replacedValues)
+
+                reWriteFile = open("reaction_scores.txt", 'w')
+    
+                for lines in scoreFileLinesTwo:
+                    reWriteFile.writelines(lines)
+                    
+                reWriteFile.close()
+
                 break
             counter += 1
         except:
             None
-            
-    del scoreFileLinesTwo[9]
-    scoreFileLinesTwo.insert(counter, replacedValues)
-
-    reWriteFile = open("reaction_scores.txt", 'w')
-    
-    for lines in scoreFileLinesTwo:
-        reWriteFile.writelines(lines)
-    reWriteFile.close()
-
+        else:
+            print("You did not make it into the top 10 :(")
+    myFile = open("reaction_scores.txt", 'r')
+    textFile = myFile.read()
+    print(textFile)
     return
     
-def gamePart(key):
+def gamePart(key, userName, userGradYear, userDate):
 
-    countdownTimer()
-    print(f"Type in the key {key}")
-
+    countdownTimer(key)
     startTime = time.time()
     keyboard.wait(key)
     endTime = time.time()
+
     timeElapsed = endTime - startTime
-    print(f"Your time was {(timeElapsed):.4f} ")
-    time.sleep(1)
-    checkTop10(timeElapsed)
+    print(f"Your time was {(timeElapsed):.4f} seconds. ")
+    time.sleep(.3)
 
-def runGame():
+    checkTop10(timeElapsed, userName, userGradYear, userDate)
+
+def runGame(userName, userGradYear, userDate):
     listofKeys = ["a", "b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
-
     checkReady()
-
     newKey = randomKey(listofKeys)
 
-    gamePart(newKey)
-    os.system("start reaction_scores.txt")
+    gamePart(newKey, userName, userGradYear, userDate)
     playAgain = input("Would you like to play again? y/n: ")
     if playAgain.lower() == "yes" or playAgain[0].lower() == "y":
-        runGame()
+        runGame(userName, userGradYear, userDate)
     else:
         print("Thanks for playing!")
         return
-        
+
 printInstructions()
-runGame()
+userName, userGradYear, userDate = userInputs()
+runGame(userName, userGradYear, userDate)
