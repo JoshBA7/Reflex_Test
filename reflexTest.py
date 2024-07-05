@@ -35,7 +35,12 @@ def countdownTimer(key):
 
 def userInputs():
     userName = input("Please enter your name: ")
-    userGradYear = input("Please enter your graduation year: ")
+    while True:
+        try:
+            userGradYear = int(input("Please enter your graduation year: "))
+            break
+        except:
+            print("Please enter a integer.")
     userDate = currentDate()
     return userName, userGradYear, userDate
 
@@ -48,7 +53,7 @@ def checkTop10(timeElapsed, userName, userGradYear, userDate):
     scoreFile = open("reaction_scores.txt", "r")    
     scoreFileLinesTwo = scoreFile.readlines()
     scoreFile.close()
-    
+
     for i in range(len(scoreFileLines)):
         scoreFileLines[i] = scoreFileLines[i].split(",")
 
@@ -77,7 +82,7 @@ def checkTop10(timeElapsed, userName, userGradYear, userDate):
         except:
             None
         else:
-            print("You did not make it into the top 10 :(")
+            None
     myFile = open("reaction_scores.txt", 'r')
     textFile = myFile.read()
     print(textFile)
